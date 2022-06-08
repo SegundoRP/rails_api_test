@@ -1,8 +1,12 @@
+FactoryBot.use_parent_strategy = false # Esto es para que al crear post cree tmb un user
 FactoryBot.define do
   factory :post do
-    title { "MyString" }
-    content { "MyString" }
-    published { false }
-    user { nil }
+    title { Faker::Lorem.sentence }
+    content { Faker::Lorem.paragraph }
+    published {
+      r = rand(0..1)
+      r.zero?
+    }
+    user
   end
 end

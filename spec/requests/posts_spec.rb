@@ -25,12 +25,12 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'GET /post/{id}' do
-    let(:posts) { create(:post) }
+    let(:post) { create(:post) }
 
-    it 'should return all the published posts' do
+    it 'should return a post' do
       get "/post/#{post.id}"
       payload = JSON.parse(response.body)
-      expect(payload.size).to_not be_empty
+      expect(payload).to_not be_empty
       expect(payload['id']).to eq(post.id)
       expect(response).to have_http_status(200)
     end
