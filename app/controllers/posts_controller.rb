@@ -2,11 +2,12 @@ class PostsController < ApplicationController
 
   rescue_from Exception do |e|
     # log.error "#{e.message}"  esto enviaria el mensaje de error a los encargados del sistema
-    render json: { error: e.message }, status: :internal_error #este es el mensaje 500 esto resuelve cualquier exception que aparezca
+    render json: { error: e.message }, status: :internal_error
+    # este es el mensaje 500 esto resuelve cualquier exception que aparezca
   end
 
   rescue_from ActiveRecord::RecordInvalid do |e|
-    render json: { error: e.message }, status: :unprocessable_entity #esto resuelve los exceptions de create o update que hayan
+    render json: { error: e.message }, status: :unprocessable_entity # esto resuelve los exceptions de create o update que hayan
   end
 
   def index
