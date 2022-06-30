@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+  before_action :authenticate_user, only: [:create, :update]
 
   rescue_from Exception do |e|
     # log.error "#{e.message}"  esto enviaria el mensaje de error a los encargados del sistema
@@ -42,5 +43,23 @@ class PostsController < ApplicationController
 
   def update_params
     params.require(:post).permit(:title, :content, :published)
+  end
+
+  def authenticate_user
+    # Bearer xxxxx
+    token_regex = /Bearer (\w+)/
+    # leer header de auth
+    headers = request.headers
+    # verificar que sea valido
+    if headers['Authorization'].present? && headers['Authorization'].match(token_regex)
+      token = headers['Authorization'].match(token_regex)[1]
+      # debemos verificar token corresponda a un user
+      # truthy falsy, si asigna un valor es truthy si no asigna es falsy
+      if(Current.user = User.find_by_auth_token(token))
+        return
+      end
+    end
+
+    render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 end
