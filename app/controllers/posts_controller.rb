@@ -21,16 +21,20 @@ class PostsController < ApplicationController
 
   def show
     @post = Post.find(params[:id])
-    render json: @post, status: :ok
+    if (@post.published? || (Current.user && @post.user_id == Current.user.id))
+      render json: @post, status: :ok
+    else
+      render json: { error: 'Not found' }, status: :not_found
+    end
   end
 
   def create
-    @post = Post.create!(create_params) #tanto para el create y update ! hace que cuando hay error levanta una excepcion y las excepciones se tratan con rescue_from
+    @post = Current.user.posts.create!(create_params) #tanto para el create y update ! hace que cuando hay error levanta una excepcion y las excepciones se tratan con rescue_from
     render json: @post, status: :created
   end
 
   def update
-    @post = Post.find(params[:id])
+    @post = Current.user.posts.find(params[:id])
     @post.update!(update_params)
     render json: @post, status: :ok
   end
@@ -47,7 +51,7 @@ class PostsController < ApplicationController
 
   def authenticate_user
     # Bearer xxxxx
-    token_regex = /Bearer (\w+)/
+    token_regex = /^Bearer (\w+)$/
     # leer header de auth
     headers = request.headers
     # verificar que sea valido

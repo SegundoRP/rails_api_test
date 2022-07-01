@@ -19,7 +19,7 @@ RSpec.describe "Posts with authentication", type: :request do
           # antes se hace la peticion del post
 
           context 'payload' do
-            subject { JSON.parse(response.body) }
+            subject { payload }
             # ese es el sujeto de pruebas
             it { is_expected.to include(:id) }
           end
@@ -35,7 +35,7 @@ RSpec.describe "Posts with authentication", type: :request do
           # antes se hace la peticion del post
 
           context 'payload' do
-            subject { JSON.parse(response.body) }
+            subject { payload }
             # ese es el sujeto de pruebas
             it { is_expected.to include(:error) }
           end
@@ -58,10 +58,10 @@ RSpec.describe "Posts with authentication", type: :request do
 
   describe "PUT /posts" do
   end
-  # it "should return OK" do
-  #   get '/posts'
-  #   payload = JSON.parse(response.body)
-  #   expect(payload).to be_empty
-  #   expect(response).to have_http_status(200)
-  # end
+
+  private
+
+  def payload
+    JSON.parse(response.body).with_indifferent_access # ese indifferent es un meotdo de hashes hace que accedamos a hashes ya sea como simbolo o string [:id] o ["id"]
+  end
 end
