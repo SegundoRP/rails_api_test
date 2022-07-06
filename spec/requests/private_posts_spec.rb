@@ -56,20 +56,22 @@ RSpec.describe "Posts with authentication", type: :request do
 
   describe "POST /posts" do
     # con auth -> crear
-    before { get "/posts/#{other_user_post_draft.id}", headers: auth_headers }
-    # antes se hace la peticion del post
+    context 'with valid auth' do
+      before { post "/posts/#{other_user_post_draft.id}", headers: auth_headers }
+      # antes se hace la peticion del post
 
-    context 'payload' do
-      subject { payload }
-      # ese es el sujeto de pruebas
-      it { is_expected.to include(:error) }
+      context 'payload' do
+        subject { payload }
+        # ese es el sujeto de pruebas
+        it { is_expected.to include(:error) }
+      end
+
+      context 'response' do
+        subject { response }
+        it { is_expected.to have_http_status(:not_found) }
+      end
+
     end
-
-    context 'response' do
-      subject { response }
-      it { is_expected.to have_http_status(:not_found) }
-    end
-
     #  sin auth -> !crear -> 401
   end
 
