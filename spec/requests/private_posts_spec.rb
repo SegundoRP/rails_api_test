@@ -11,6 +11,7 @@ RSpec.describe "Posts with authentication", type: :request do
   let!(:other_auth_headers) { { 'Authorization' => "Bearer #{other_user.auth_token}" } }
   # Todo esto son datos de prueba que se necesita y se podran utilizar en las pruebas
   let!(:create_params) { { 'post' => { "title" => "title", "content" => "content", "published" => true }}}
+  let!(:update_params) { { 'post' => { "title" => "title", "content" => "content", "published" => true }}}
 
   describe "GET /posts/{id}" do
     context 'with valid auth' do
@@ -86,6 +87,38 @@ RSpec.describe "Posts with authentication", type: :request do
   end
 
   describe "PUT /posts" do
+    # con auth ->
+      # actualizar un post nuestro
+      # !actualizar  un post de otro -> 401
+    context 'with valid auth' do
+      context "when updating users's post" do
+        before { put "/posts/#{user_post.id}", params: update_params, headers: auth_headers }
+        context 'payload' do
+          subject { payload }
+          it { is_expected.to include(:id, :title, :content, :published, :author) }
+          it { expect(payload[:id]).to eq(user_post.id) }
+        end
+
+        context 'response' do
+          subject { response }
+          it { is_expected.to have_http_status(:ok) }
+        end
+      end
+    end
+
+    # context 'without auth' do
+    #   before { post "/posts", params: create_params }
+
+    #   context 'payload' do
+    #     subject { payload }
+    #     it { is_expected.to include(:error) }
+    #   end
+
+    #   context 'response' do
+    #     subject { response }
+    #     it { is_expected.to have_http_status(:unauthorized) }
+    #   end
+    # end
   end
 
   private
