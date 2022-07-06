@@ -104,6 +104,19 @@ RSpec.describe "Posts with authentication", type: :request do
           it { is_expected.to have_http_status(:ok) }
         end
       end
+
+      context "when updating other users's post" do
+        before { put "/posts/#{other_user_post.id}", params: update_params, headers: auth_headers }
+        context 'payload' do
+          subject { payload }
+          it { is_expected.to include(:error) }
+        end
+
+        context 'response' do
+          subject { response }
+          it { is_expected.to have_http_status(:not_found) }
+        end
+      end
     end
 
     # context 'without auth' do

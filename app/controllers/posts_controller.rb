@@ -7,6 +7,10 @@ class PostsController < ApplicationController
     # este es el mensaje 500 esto resuelve cualquier exception que aparezca
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: { error: e.message }, status: :not_found
+  end
+
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: { error: e.message }, status: :unprocessable_entity # esto resuelve los exceptions de create o update que hayan
   end
