@@ -9,7 +9,7 @@ module Secured
       token = headers['Authorization'].match(token_regex)[1]
       # debemos verificar token corresponda a un user
       # truthy falsy, si asigna un valor es truthy si no asigna es falsy
-      if(Current.user = User.find_by_auth_token(token))
+      if(Current.user = User.find_by_auth_token(token)) # el find_by_... es un Dynamic Finders
         return
       end
     end
