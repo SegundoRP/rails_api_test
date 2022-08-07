@@ -15,6 +15,7 @@ RSpec.describe "Posts with authentication", type: :request do
 
   describe "GET /posts/{id}" do
     context 'with valid auth' do
+     before { allow(JsonWebToken).to receive(:verify).and_return([{email: user.email}]) }
       context "when requisting other's author post" do
         context 'when post is public' do
           before { get "/posts/#{other_user_post.id}", headers: auth_headers }
@@ -58,6 +59,7 @@ RSpec.describe "Posts with authentication", type: :request do
   describe "POST /posts" do
     # con auth -> crear
     context 'with valid auth' do
+      before { allow(JsonWebToken).to receive(:verify).and_return([{email: user.email}]) }
       before { post "/posts/", params: create_params, headers: auth_headers }
 
       context 'payload' do
@@ -91,6 +93,7 @@ RSpec.describe "Posts with authentication", type: :request do
       # actualizar un post nuestro
       # !actualizar  un post de otro -> 401
     context 'with valid auth' do
+      before { allow(JsonWebToken).to receive(:verify).and_return([{email: user.email}]) }
       context "when updating users's post" do
         before { put "/posts/#{user_post.id}", params: update_params, headers: auth_headers }
         context 'payload' do
@@ -106,7 +109,7 @@ RSpec.describe "Posts with authentication", type: :request do
       end
 
       context "when updating other users's post" do
-        before { put "/posts/#{other_user_post.id}", params: update_params, headers: auth_headers }
+        before { allow(JsonWebToken).to receive(:verify).and_return([{email: user.email}]) }
         context 'payload' do
           subject { payload }
           it { is_expected.to include(:error) }
